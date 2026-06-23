@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relógio da Prova</title>
+  <style>
+    :root {
+      --bg: #0b0b0d;
+      --pulse: #ff3b3b;
+      --text: #f9f9f9;
+      --danger: #ff9b00;
+      --shadow: rgba(255, 59, 59, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, rgba(255, 59, 59, 0.18), transparent 35%),
+        linear-gradient(135deg, #0f0f14, #09090c 60%);
+      color: var(--text);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      width: min(580px, 95vw);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 32px;
+      box-shadow: 0 0 120px rgba(255, 59, 59, 0.12);
+      backdrop-filter: blur(24px);
+      background: rgba(12, 12, 17, 0.92);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container::before {
+      content: "TEMPO ESGOTADO";
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      letter-spacing: 0.35em;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .clock {
+      margin-top: 1rem;
+      padding: 2rem 1.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 24px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 0 36px rgba(255, 59, 59, 0.12), 0 0 40px rgba(255, 59, 59, 0.15);
+      animation: beat 1s infinite ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    .time {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .time h1 {
+      font-size: clamp(2.8rem, 5.6vw, 4rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--pulse);
+      line-height: 0.95;
+      text-shadow:
+        1px 1px 0 rgba(255, 255, 255, 0.95),
+        -1px -1px 0 rgba(255, 255, 255, 0.95),
+        1px -1px 0 rgba(255, 255, 255, 0.95),
+        -1px 1px 0 rgba(255, 255, 255, 0.95);
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      word-break: keep-all;
+    }
+
+    .time p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.95);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .progress-wrap {
+      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 59, 59, 0.14);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 1rem;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, rgba(255, 59, 59, 0.95), rgba(255, 155, 0, 0.9));
+      transform-origin: left;
+      will-change: width;
+      transition: width 0.05s linear;
+    }
+
+    .warning {
+      margin-top: 1.4rem;
+      color: rgba(255, 155, 0, 0.95);
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+    }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 0.08em;
+    }
+
+    .pressure-text {
+      margin: 0;
+      color: #fff;
+      font-size: 1rem;
+      line-height: 1.4;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="clock">
+      <div class="time">
+        <h1 id="relogio">00:00:00.000</h1>
+        <p id="status">O tempo não espera.</p>
+      </div>
+      <div class="progress-wrap" aria-label="Barra de tempo restante">
+        <div class="progress-bar" id="barra"></div>
+      </div>
+      <div class="warning">Tempo esgotado.</div>
+    </div>
+    <div class="footer">
+      <p class="pressure-text" id="pressureText" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <script>
+    const relogioEl = document.getElementById('relogio');
+    const barraEl = document.getElementById('barra');
+    const statusEl = document.getElementById('status');
+    const pressureTextEl = document.getElementById('pressureText');
+
+    const pressureMessages = [
+      'O tempo está acabando.',
+      'Cada segundo é uma decisão que você não pode perder.',
+      'O relógio não perdoa quem hesita.',
+      'O pânico começa quando você percebe que já era tarde.',
+      'Escreva mais, pense menos.'
+    ];
+    let pressureIndex = 0;
+
+    function pad(value, digits = 2) {
+      return String(value).padStart(digits, '0');
+    }
+
+    function atualizaRelogio() {
+      const agora = new Date();
+      const horas = pad(agora.getHours());
+      const minutos = pad(agora.getMinutes());
+      const segundos = pad(agora.getSeconds());
+      const milissegundos = pad(agora.getMilliseconds(), 3);
+      relogioEl.textContent = `${horas}:${minutos}:${segundos}.${milissegundos}`;
+
+      const progresso = 1 - agora.getMilliseconds() / 999;
+      barraEl.style.width = `${Math.max(0, Math.min(100, progresso * 100))}%`;
+
+      const ritmo = agora.getSeconds() % 2 === 0 ? 'TIK' : 'TAK';
+      statusEl.textContent = ritmo;
+    }
+
+    function atualizaPressureMessage() {
+      pressureTextEl.textContent = pressureMessages[pressureIndex];
+      pressureIndex = (pressureIndex + 1) % pressureMessages.length;
+    }
+
+    function loop() {
+      atualizaRelogio();
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+    atualizaPressureMessage();
+    setInterval(atualizaPressureMessage, 2000);
+  </script>
+</body>
+</html>
